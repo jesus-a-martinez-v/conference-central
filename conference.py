@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 
 """
-conference.py -- Udacity conference server-side Python App Engine API;
+conference.py -- Conference server-side Python App Engine API;
     uses Google Cloud Endpoints
 
 $Id: conference.py,v 1.25 2014/05/24 23:42:19 wesc Exp wesc $
 
-created by wesc on 2014 apr 21
-
 """
-
-__author__ = 'wesc+api@google.com (Wesley Chun)'
-
 
 from datetime import datetime
 import json
@@ -64,22 +59,17 @@ class ConferenceApi(remote.Service):
 
     def _getProfileFromUser(self):
         """Return user Profile from datastore, creating new one if non-existent."""
-        ## TODO 2
-        ## step 1: make sure user is authed
-        ## uncomment the following lines:
-        # user = endpoints.get_current_user()
-        # if not user:
-        #     raise endpoints.UnauthorizedException('Authorization required')
+        user = endpoints.get_current_user()
+        if not user:
+            raise endpoints.UnauthorizedException('Authorization required')
         profile = None
-        ## step 2: create a new Profile from logged in user data
-        ## you can use user.nickname() to get displayName
-        ## and user.email() to get mainEmail
+
         if not profile:
             profile = Profile(
                 userId = None,
                 key = None,
-                displayName = "Test", 
-                mainEmail= None,
+                displayName = user.nickname(),
+                mainEmail= user.email(),
                 teeShirtSize = str(TeeShirtSize.NOT_SPECIFIED),
             )
 
@@ -91,7 +81,7 @@ class ConferenceApi(remote.Service):
         # get user Profile
         prof = self._getProfileFromUser()
 
-        # if saveProfile(), process user-modifyable fields
+        # if saveProfile(), process user-modifiable fields
         if save_request:
             for field in ('displayName', 'teeShirtSize'):
                 if hasattr(save_request, field):
@@ -109,15 +99,13 @@ class ConferenceApi(remote.Service):
         """Return user profile."""
         return self._doProfile()
 
-    # TODO 1
-    # 1. change request class
-    # 2. pass request to _doProfile function
-    @endpoints.method(message_types.VoidMessage, ProfileForm,
+    @endpoints.method(ProfileMiniForm, ProfileForm,
             path='profile', http_method='POST', name='saveProfile')
     def saveProfile(self, request):
         """Update & return user profile."""
-        return self._doProfile()
+        # TODO It isn't updating anything right now...
+        return self._doProfile(save_request=request)
 
 
-# registers API
+# Registers API
 api = endpoints.api_server([ConferenceApi]) 

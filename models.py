@@ -10,8 +10,6 @@ created/forked from conferences.py by wesc on 2014 may 24
 
 """
 
-__author__ = 'wesc+api@google.com (Wesley Chun)'
-
 import httplib
 import endpoints
 from protorpc import messages
