@@ -21,6 +21,8 @@ from protorpc import remote
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 
+import utils
+
 from models import Profile
 from models import ProfileMiniForm
 from models import ProfileForm
@@ -33,7 +35,7 @@ API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-@endpoints.api( name='conference',
+@endpoints.api(name='conference',
                 version='v1',
                 allowed_client_ids=[WEB_CLIENT_ID, API_EXPLORER_CLIENT_ID],
                 scopes=[EMAIL_SCOPE])
@@ -62,16 +64,21 @@ class ConferenceApi(remote.Service):
         user = endpoints.get_current_user()
         if not user:
             raise endpoints.UnauthorizedException('Authorization required')
-        profile = None
+
+        id = utils.getUserId(user)  # We obtain the user id.
+        p_key = ndb.Key(Profile, id)  # Then we proceed to generate the key using the user id.
+
+        profile = p_key.get()  # We look for this profile.
 
         if not profile:
             profile = Profile(
-                userId = None,
-                key = None,
+                #userId = id,
+                key = p_key,
                 displayName = user.nickname(),
                 mainEmail= user.email(),
                 teeShirtSize = str(TeeShirtSize.NOT_SPECIFIED),
             )
+            profile.put()  # This saves the profile in datastore.
 
         return profile      # return Profile
 
