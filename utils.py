@@ -7,12 +7,17 @@ from google.appengine.api import urlfetch
 from models import Profile
 
 
-def getUserId(user, id_type="email"):
+def get_user_id(user, id_type="email"):
+    """
+    A workaround implementation for getting userid.
+    :param user:
+    :param id_type:
+    :return:
+    """
     if id_type == "email":
         return user.email()
 
     if id_type == "oauth":
-        """A workaround implementation for getting userid."""
         auth = os.getenv('HTTP_AUTHORIZATION')
         bearer, token = auth.split()
         token_type = 'id_token'

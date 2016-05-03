@@ -1,3 +1,4 @@
+# General information.
 application: conferencecentral-706
 version: 1
 runtime: python27
@@ -33,6 +34,15 @@ handlers:       # static then dynamic
 - url: /_ah/spi/.*
   script: conference.api
   secure: always
+
+  # This means that this route won't be available for other users different than the admin.
+- url: /crons/set_announcement
+  script: main.app
+  login: admin
+
+- url: /tasks/send_confirmation_email
+  script: main.app
+  login: admin
 
 libraries:
 
