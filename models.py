@@ -7,10 +7,11 @@ Conference server-side Python App Engine data & ProtoRPC models
 
 """
 
-import httplib
-import endpoints
-from protorpc import messages
 from google.appengine.ext import ndb
+from protorpc import messages
+import endpoints
+import httplib
+
 
 # NOTE to self:
 #  If a class extends ndb.Model it is used to persist in Datastore.
