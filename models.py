@@ -28,6 +28,7 @@ class Profile(ndb.Model):
     mainEmail = ndb.StringProperty()
     teeShirtSize = ndb.StringProperty(default='NOT_SPECIFIED')
     conferenceKeysToAttend = ndb.StringProperty(repeated=True)
+    sessionsKeysWishlist = ndb.StringProperty(repeated=True)
 
 
 class ProfileMiniForm(messages.Message):
@@ -105,6 +106,43 @@ class ConferenceQueryForms(messages.Message):
     filters = messages.MessageField(ConferenceQueryForm, 1, repeated=True)
 
 
+class Session(ndb.Model):
+    """
+    Session --
+    """
+    name = ndb.StringProperty(required=True)
+    highlights = ndb.StringProperty()
+    speaker = ndb.StringProperty(required=True)  # TODO Check this... It might be an entity
+    duration = ndb.IntegerProperty()  # TODO Number of minutes?
+    typeOfSession = ndb.StringProperty()  # TODO Maybe an Enum?
+    date = ndb.DateProperty(required=True)
+    startTime = ndb.TimeProperty(required=True)
+    conferenceWebsafeKey = ndb.StringProperty()
+
+
+class SessionForm(messages.Message):
+    """
+    SessionForm --
+    """
+    name = messages.StringField(1)
+    highlights = messages.StringField(2)
+    speaker = messages.StringField(3)  # TODO Check this... It might be an entity
+    duration = messages.IntegerField(4)  # TODO Number of minutes?
+    typeOfSession = messages.StringField(5)  # TODO Maybe an Enum?
+    date = messages.StringField(6)
+    startTime = messages.StringField(7)
+    conferenceWebsafeKey = messages.StringField(8)
+    sessionWebsafeKey = messages.StringField(9)
+
+
+
+class SessionForms(messages.Message):
+    """
+    SessionForms - Multiple Session outbound form message.
+    """
+    items = messages.MessageField(SessionForm, 1, repeated=True)
+
+
 class BooleanMessage(messages.Message):
     """
     BooleanMessage-- outbound Boolean value message
@@ -124,6 +162,30 @@ class StringMessage(messages.Message):
     StringMessage-- outbound (single) string message
     """
     data = messages.StringField(1, required=True)
+
+
+class IntegerRange(messages.Message):
+    """
+    IntegerRange -- outbound integer range.
+    """
+    min = messages.IntegerField(1)
+    max = messages.IntegerField(2)
+
+
+class DateRange(messages.Message):
+    """
+    IntegerRange -- outbound integer range.
+    """
+    min = messages.StringField(1)
+    max = messages.StringField(2)
+
+
+class TimeRange(messages.Message):
+    """
+    IntegerRange -- outbound integer range.
+    """
+    min = messages.StringField(1)
+    max = messages.StringField(2)
 
 
 class TeeShirtSize(messages.Enum):
