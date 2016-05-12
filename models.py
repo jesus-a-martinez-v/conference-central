@@ -174,7 +174,7 @@ class IntegerRange(messages.Message):
 
 class DateRange(messages.Message):
     """
-    IntegerRange -- outbound integer range.
+    DateRange -- outbound date range.
     """
     min = messages.StringField(1)
     max = messages.StringField(2)
@@ -182,7 +182,7 @@ class DateRange(messages.Message):
 
 class TimeRange(messages.Message):
     """
-    IntegerRange -- outbound integer range.
+    TimeRange -- outbound time range.
     """
     min = messages.StringField(1)
     max = messages.StringField(2)

@@ -532,7 +532,6 @@ class ConferenceApi(remote.Service):
             items=[self._copy_session_to_form(s) for s in query]
         )
 
-
     @endpoints.method(TimeRange, SessionForms, path='sessionsByStartTime', http_method='POST',
                       name='sessionsByStartTime')
     def get_sessions_by_start_time(self, request):
