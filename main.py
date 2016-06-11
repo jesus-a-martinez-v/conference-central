@@ -5,13 +5,16 @@ from google.appengine.api import app_identity
 from google.appengine.api import mail
 import webapp2
 
+"""main.py
+Defines handlers for long running or asynchronous task performed by the cron.
+"""
+
 
 class SetAnnouncementHandler(webapp2.RequestHandler):
     def get(self):
         """
         Set Announcement in Memcache.
         """
-
         ConferenceApi._cache_announcement()
 
 
@@ -22,12 +25,11 @@ class SendConfirmationEmailHandler(webapp2.RequestHandler):
         """
         mail.send_mail(
             'noreply@%s.appspotmail.com' % (
-                app_identity.get_application_id()),     # from
-            self.request.get('email'),                  # to
-            'You created a new Conference!',            # subject
-            'Hi, you have created a following '         # body
-            'conference:\r\n\r\n%s' % self.request.get(
-                'conferenceInfo')
+                app_identity.get_application_id()),  # from
+            self.request.get('email'),  # to
+            'You created a new Conference!',  # subject
+            'Hi, you have created a following '  # body
+            'conference:\r\n\r\n%s' % self.request.get('conferenceInfo')
         )
 
 

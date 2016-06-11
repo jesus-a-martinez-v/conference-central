@@ -20,9 +20,11 @@ from settings import WEB_CLIENT_ID
 import endpoints
 import utils
 
+# -- Constants definitions -- #
 EMAIL_SCOPE = endpoints.EMAIL_SCOPE
 API_EXPLORER_CLIENT_ID = endpoints.API_EXPLORER_CLIENT_ID
 MEMCACHE_ANNOUNCEMENTS_KEY = "MEMCACHE KEY"
+MEMCACHE_SPEAKER_KEY = "MEMCACHE SPEAKER KEY"
 
 DEFAULTS = {
     "city": "Default City",
@@ -376,9 +378,7 @@ class ConferenceApi(remote.Service):
         conference = ndb.Key(urlsafe=request.conferenceWebsafeKey).get()
         session_id = Session.allocate_ids(size=1, parent=conference.key)[0]
         session_key = ndb.Key(Session, session_id, parent=conference.key)
-        # Get conference
 
-        print(data)
         # Process defaults values
         # If there's no date, then we use the start date from the conference.
         if not data['date']:
@@ -407,6 +407,14 @@ class ConferenceApi(remote.Service):
             setattr(request, 'highlights', data['highlights'])
 
         data['key'] = session_key
+
+        # Get all sessions in this conference.
+        sessions = Session.query(ancestor=conference.key)
+
+        # If there's more than one session with this speaker, then we'll cache the speaker and sessions names.
+        if [s.speaker for s in sessions].count(data['speaker']) > 1:
+            # TODO Put it in cache.
+            pass
 
         Session(**data).put()
 

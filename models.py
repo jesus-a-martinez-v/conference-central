@@ -13,14 +13,6 @@ import endpoints
 import httplib
 
 
-# NOTE to self:
-#  If a class extends ndb.Model it is used to persist in Datastore.
-#  If a class extends messages.Message it is used to pass/receive information over the network.
-
-
-# Remember:
-# Each field in a messages.Message subclass has to be enumerated.
-
 class Profile(ndb.Model):
     """
     Profile -- User profile object
@@ -109,13 +101,13 @@ class ConferenceQueryForms(messages.Message):
 
 class Session(ndb.Model):
     """
-    Session --
+    Session -- Session object.
     """
     name = ndb.StringProperty(required=True)
     highlights = ndb.StringProperty()
-    speaker = ndb.StringProperty(required=True)  # TODO Check this... It might be an entity
-    duration = ndb.IntegerProperty()  # TODO Number of minutes?
-    typeOfSession = ndb.StringProperty()  # TODO Maybe an Enum?
+    speaker = ndb.StringProperty(required=True)
+    duration = ndb.IntegerProperty()  # Number of minutes.
+    typeOfSession = ndb.StringProperty()
     date = ndb.DateProperty(required=True)
     startTime = ndb.TimeProperty(required=True)
     conferenceWebsafeKey = ndb.StringProperty()
@@ -123,18 +115,17 @@ class Session(ndb.Model):
 
 class SessionForm(messages.Message):
     """
-    SessionForm --
+    SessionForm -- Session inbound/outbound form message
     """
     name = messages.StringField(1)
     highlights = messages.StringField(2)
-    speaker = messages.StringField(3)  # TODO Check this... It might be an entity
-    duration = messages.IntegerField(4)  # TODO Number of minutes?
-    typeOfSession = messages.StringField(5)  # TODO Maybe an Enum?
+    speaker = messages.StringField(3)
+    duration = messages.IntegerField(4)
+    typeOfSession = messages.StringField(5)
     date = messages.StringField(6)
     startTime = messages.StringField(7)
     conferenceWebsafeKey = messages.StringField(8)
     sessionWebsafeKey = messages.StringField(9)
-
 
 
 class SessionForms(messages.Message):

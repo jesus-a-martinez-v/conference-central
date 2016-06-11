@@ -7,27 +7,26 @@ from google.appengine.api import urlfetch
 from models import Profile
 
 
-def get_user_id(user, id_type="email"):
+def get_user_id(user, id_type='email'):
     """
     A workaround implementation for getting userid.
-    :param user:
-    :param id_type:
-    :return:
     """
-    if id_type == "email":
+    if id_type == 'email':
         return user.email()
 
-    if id_type == "oauth":
+    if id_type == 'oauth':
         auth = os.getenv('HTTP_AUTHORIZATION')
         bearer, token = auth.split()
         token_type = 'id_token'
+
         if 'OAUTH_USER_ID' in os.environ:
             token_type = 'access_token'
-        url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?%s=%s'
-               % (token_type, token))
+
+        url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?%s=%s'  % (token_type, token))
         user = {}
-        wait = 1
-        for i in range(3):
+        waiting_time = 1
+
+        for i in range(3):  # Try at most 3 times.
             resp = urlfetch.fetch(url)
             if resp.status_code == 200:
                 user = json.loads(resp.content)
@@ -36,14 +35,17 @@ def get_user_id(user, id_type="email"):
                 url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?%s=%s'
                        % ('access_token', token))
             else:
-                time.sleep(wait)
-                wait = wait + i
+                # Retry
+                time.sleep(waiting_time)
+                waiting_time = waiting_time + i
+
         return user.get('user_id', '')
 
-    if id_type == "custom":
+    if id_type == 'custom':
         # implement your own user_id creation and getting algorithm
         # this is just a sample that queries datastore for an existing profile
         # and generates an id if profile does not exist for an email
+
         profile = Conference.query(Conference.mainEmail == user.email())
         if profile:
             return profile.id()
